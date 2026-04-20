@@ -2,9 +2,13 @@ import { useState } from "react";
 import characterImg from "../assets/character.png";
 
 export default function Login() {
+  const [view, setView] = useState("login");
+  const [name, setName] = useState("");
+  const [birthdate, setBirthdate] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [message, setMessage] = useState(null);
   const handleLogin = async () => {
     const res = await fetch("http://localhost:3000/login", {
       method: "POST",
@@ -14,6 +18,34 @@ export default function Login() {
     const data = await res.json();
     localStorage.setItem("token", data.token);
     console.log("Logged in");
+  };
+
+  const handleRegister = async () => {
+    if (password !== confirmPassword) {
+      alert("Passwords do not match!");
+      return;
+    }
+    const res = await fetch("http://localhost:3000/register", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name, birthdate, email, password }),
+    });
+    const data = await res.json();
+    if (res.ok) {
+      setMessage({
+        text: "Account created successfully! Please log in.",
+        type: "success",
+      });
+      setTimeout(() => {
+        setView("login");
+        setMessage(null);
+      }, 2000);
+    } else {
+      setMessage({
+        text: data.message || "Registration failed.",
+        type: "error",
+      });
+    }
   };
 
   return (
@@ -27,15 +59,66 @@ export default function Login() {
         }
       `}</style>
       <div style={styles.left}>
-        <img src={characterImg} alt="character" style={styles.image} />
+        <div
+          style={{
+            position: "absolute",
+            width: "370px",
+            height: "420px",
+            borderRadius: "40px",
+            background: "#C8A882",
+            opacity: 0.1,
+            zIndex: 0,
+          }}
+        />
+        <img
+          src={characterImg}
+          alt="character"
+          style={{ ...styles.image, position: "relative", zIndex: 1 }}
+        />
       </div>
 
-      {/* RIGHT — form */}
       <div style={styles.right}>
-        <div style={styles.logoIcon}>AZ</div>
+        <div style={styles.logoIcon}>AV</div>
         <h1 style={styles.brandName}>Achievo</h1>
 
         <div style={styles.formCard}>
+          <h2
+            style={{
+              fontFamily: "'Corben', cursive",
+              fontWeight: "700",
+              fontSize: "1.1rem",
+              color: "#1a1a1a",
+              margin: "0 0 0.2rem",
+              textAlign: "center",
+            }}
+          >
+            {view === "login" ? "Login" : "Create Account"}
+          </h2>
+          {view === "register" && (
+            <div style={{ display: "flex", gap: "0.8rem" }}>
+              <div style={{ ...styles.field, flex: 1 }}>
+                <label style={styles.label}>Name</label>
+                <input
+                  type="text"
+                  placeholder="Your name"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  style={styles.input}
+                />
+              </div>
+
+              <div style={{ ...styles.field, flex: 1 }}>
+                <label style={styles.label}>Birthdate</label>
+                <input
+                  type="date"
+                  value={birthdate}
+                  onChange={(e) => setBirthdate(e.target.value)}
+                  style={styles.input}
+                />
+              </div>
+            </div>
+          )}
+          {/* SHARED FIELDS */}
           <div style={styles.field}>
             <label style={styles.label}>Email</label>
             <input
@@ -54,14 +137,72 @@ export default function Login() {
               placeholder="Your password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              onKeyDown={(e) => e.key === "Enter" && handleLogin()}
               style={styles.input}
             />
           </div>
 
-          <button onClick={handleLogin} style={styles.btn}>
-            Continue →
+          {/* CONFIRM PASSWORD — register only */}
+          {view === "register" && (
+            <div style={styles.field}>
+              <label style={styles.label}>Re-enter Password</label>
+              <input
+                type="password"
+                placeholder="Confirm your password"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                style={styles.input}
+              />
+            </div>
+          )}
+
+          {message && (
+            <div
+              style={{
+                padding: "10px 14px",
+                borderRadius: "8px",
+                fontSize: "13px",
+                fontFamily: "'DM Sans', sans-serif",
+                fontWeight: "500",
+                textAlign: "center",
+                background: message.type === "success" ? "#e9f7ef" : "#fdecea",
+                color: message.type === "success" ? "#1e7e44" : "#c0392b",
+                border: `1px solid ${message.type === "success" ? "#a8d5b5" : "#f1b0aa"}`,
+              }}
+            >
+              {message.text}
+            </div>
+          )}
+
+          <button
+            onClick={view === "login" ? handleLogin : handleRegister}
+            style={styles.btn}
+          >
+            {view === "login" ? "Continue →" : "Create Account →"}
           </button>
+
+          <p
+            style={{
+              textAlign: "center",
+              fontSize: "13px",
+              fontFamily: "'DM Sans', sans-serif",
+              color: "#888",
+              margin: "0",
+            }}
+          >
+            {view === "login" ? "New here?" : "Already have an account?"}{" "}
+            <span
+              onClick={() => setView(view === "login" ? "register" : "login")}
+              style={{
+                color: "#1a1a1a",
+                fontWeight: "600",
+                cursor: "pointer",
+                textDecoration: "underline",
+                textUnderlineOffset: "3px",
+              }}
+            >
+              {view === "login" ? "Create an account" : "Login"}
+            </span>
+          </p>
         </div>
       </div>
     </div>
@@ -71,20 +212,22 @@ export default function Login() {
 const styles = {
   page: {
     display: "flex",
-    alignItems: "center",
+    alignItems: "flex-start",
     justifyContent: "center",
     width: "100vw",
-    height: "100vh",
+    minHeight: "100vh",
     background: "white",
-    gap: "5rem",
-    overflow: "hidden",
+    gap: "4rem",
+    overflowY: "auto",
   },
   left: {
     flex: 1,
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
-    height: "100%",
+    minHeight: "100vh",
+    overflow: "visible",
+    position: "relative",
   },
   image: {
     width: "90%",
@@ -97,9 +240,11 @@ const styles = {
     flex: 1,
     display: "flex",
     flexDirection: "column",
-    alignItems: "flex-start",
-    justifyContent: "center",
+    alignItems: "center",
+    justifyContent: "flex-start",
     paddingRight: "4rem",
+    paddingTop: "0.8rem",
+    paddingBottom: "2rem",
   },
   logoIcon: {
     width: "44px",
@@ -113,26 +258,26 @@ const styles = {
     fontWeight: "700",
     fontSize: "13px",
     color: "#5a3e00",
-    marginBottom: "0.5rem",
+    marginBottom: "0.2rem",
   },
   brandName: {
     fontFamily: "'Corben', cursive",
     fontWeight: "400",
     fontSize: "2.6rem",
     color: "#1a1a1a",
-    margin: "0.4rem 0 1.5rem",
+    margin: "0 0 0.6rem",
     letterSpacing: "-0.5px",
   },
   formCard: {
     background: "white",
     border: "1px solid #e0dbd2",
-    borderRadius: "16px",
-    padding: "1.8rem",
+    borderRadius: "10px",
+    padding: "1rem 1.2rem",
     width: "100%",
-    maxWidth: "420px",
+    maxWidth: "400px",
     display: "flex",
     flexDirection: "column",
-    gap: "1.1rem",
+    gap: "0.5rem",
   },
   field: {
     display: "flex",
@@ -144,7 +289,7 @@ const styles = {
     fontFamily: "'DM Sans', sans-serif",
     fontWeight: "500",
     color: "#1a1a1a",
-    textAlign: "center",
+    textAlign: "left",
     letterSpacing: "0.1px",
   },
   input: {
@@ -161,15 +306,16 @@ const styles = {
   },
   btn: {
     background: "#F5C518",
-    color: "#5a3e00",
-    border: "none",
-    borderRadius: "10px",
+    color: "#1a1a1a",
+    border: "2px solid #1a1a1a",
+    borderRadius: "999px",
     padding: "13px",
-    fontSize: "15px",
-    fontFamily: "'DM Sans', sans-serif",
+    fontSize: "13px",
+    fontFamily: "'Satoshi', sans-serif",
     fontWeight: "700",
     cursor: "pointer",
     width: "100%",
     marginTop: "0.25rem",
+    letterSpacing: "0.2px",
   },
 };
