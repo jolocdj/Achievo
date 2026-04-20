@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 
 export default function Dashboard() {
   const [tasks, setTasks] = useState([
@@ -16,45 +16,84 @@ export default function Dashboard() {
       ),
     );
   };
+  const [currentDate, setCurrentDate] = useState(new Date());
+  const [selectedDate, setSelectedDate] = useState(new Date());
 
-  const days = [
-    ["28", true],
-    ["1", false],
-    ["2", false],
-    ["3", false, true],
-    ["4", false],
-    ["5", false],
-    ["6", false],
-    ["7", false],
-    ["8", false],
-    ["9", false],
-    ["10", false],
-    ["11", false],
-    ["12", false],
-    ["13", false],
-    ["14", false],
-    ["15", false],
-    ["16", false],
-    ["17", false],
-    ["18", false],
-    ["19", false],
-    ["20", false],
-    ["21", false],
-    ["22", false],
-    ["23", false],
-    ["24", false],
-    ["25", false],
-    ["26", false],
-    ["27", false],
-    ["28", false],
-    ["29", false],
-    ["30", false],
-    ["31", false],
-    ["1", true],
-    ["2", true],
-    ["3", true],
-  ];
+  const monthLabel = currentDate.toLocaleString("en-US", {
+    month: "long",
+    year: "numeric",
+  });
 
+  const calendarDays = useMemo(() => {
+    const year = currentDate.getFullYear();
+    const month = currentDate.getMonth();
+
+    const firstDayOfMonth = new Date(year, month, 1);
+    const lastDayOfMonth = new Date(year, month + 1, 0);
+
+    const startDay = (firstDayOfMonth.getDay() + 6) % 7; // Monday-first
+    const daysInMonth = lastDayOfMonth.getDate();
+
+    const prevMonthLastDay = new Date(year, month, 0).getDate();
+
+    const days = [];
+
+    for (let i = startDay - 1; i >= 0; i--) {
+      const dayNumber = prevMonthLastDay - i;
+      const date = new Date(year, month - 1, dayNumber);
+      days.push({
+        key: `prev-${dayNumber}`,
+        day: dayNumber,
+        muted: true,
+        active: false,
+        date,
+      });
+    }
+
+    for (let day = 1; day <= daysInMonth; day++) {
+      const date = new Date(year, month, day);
+      const isActive =
+        selectedDate.getFullYear() === date.getFullYear() &&
+        selectedDate.getMonth() === date.getMonth() &&
+        selectedDate.getDate() === date.getDate();
+
+      days.push({
+        key: `current-${day}`,
+        day,
+        muted: false,
+        active: isActive,
+        date,
+      });
+    }
+
+    const remaining = 35 - days.length;
+    const totalSlots = remaining > 0 ? 35 : 42;
+
+    for (let day = 1; days.length < totalSlots; day++) {
+      const date = new Date(year, month + 1, day);
+      days.push({
+        key: `next-${day}`,
+        day,
+        muted: true,
+        active: false,
+        date,
+      });
+    }
+
+    return days;
+  }, [currentDate, selectedDate]);
+
+  const goToPreviousMonth = () => {
+    setCurrentDate(
+      new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, 1),
+    );
+  };
+
+  const goToNextMonth = () => {
+    setCurrentDate(
+      new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 1),
+    );
+  };
   const categories = [
     { name: "Work", people: ["A", "B"] },
     { name: "Family", people: ["A", "B", "C"] },
@@ -159,10 +198,22 @@ export default function Dashboard() {
         <div style={styles.grid}>
           <section style={styles.calendarCard}>
             <div style={styles.cardHeader}>
-              <h3 style={styles.cardTitle}>March 2022</h3>
+              <h3 style={styles.cardTitle}>{monthLabel}</h3>
               <div style={styles.headerIcons}>
-                <span style={styles.arrow}>‹</span>
-                <span style={styles.arrow}>›</span>
+                <button
+                  type="button"
+                  onClick={goToPreviousMonth}
+                  style={styles.arrowButton}
+                >
+                  ‹
+                </button>
+                <button
+                  type="button"
+                  onClick={goToNextMonth}
+                  style={styles.arrowButton}
+                >
+                  ›
+                </button>
               </div>
             </div>
 
@@ -175,18 +226,33 @@ export default function Dashboard() {
             </div>
 
             <div style={styles.daysGrid}>
-              {days.map(([day, muted, active], index) => (
-                <div
-                  key={`${day}-${index}`}
+              {calendarDays.map((item) => (
+                <button
+                  key={item.key}
+                  type="button"
+                  onClick={() => {
+                    setSelectedDate(item.date);
+                    if (item.muted) {
+                      setCurrentDate(
+                        new Date(
+                          item.date.getFullYear(),
+                          item.date.getMonth(),
+                          1,
+                        ),
+                      );
+                    }
+                  }}
                   style={{
                     ...styles.dayCell,
-                    color: muted ? "#c8c1b7" : "#3b342b",
-                    background: active ? "#f2d541" : "transparent",
-                    fontWeight: active ? 700 : 500,
+                    color: item.muted ? "#c8c1b7" : "#3b342b",
+                    background: item.active ? "#f2d541" : "transparent",
+                    fontWeight: item.active ? 700 : 500,
+                    cursor: "pointer",
+                    border: "none",
                   }}
                 >
-                  {day}
-                </div>
+                  {item.day}
+                </button>
               ))}
             </div>
           </section>
@@ -381,6 +447,8 @@ export default function Dashboard() {
 
 const cardBase = {
   background: "#fbf9f6",
+  height: "100%",
+  minHeight: 0,
   borderRadius: "26px",
   border: "1px solid #ede7dd",
   overflow: "hidden",
@@ -388,18 +456,20 @@ const cardBase = {
 
 const styles = {
   page: {
-    minHeight: "100vh",
-    width: "100%",
+    height: "100vh",
+    width: "100vw",
+    overflow: "hidden",
     display: "flex",
     background: "#f7f4ef",
-    padding: "22px",
-    gap: "22px",
+    padding: "18px",
+    gap: "14px",
     fontFamily: "'DM Sans', sans-serif",
     color: "#1f1a14",
   },
 
   sidebar: {
-    width: "310px",
+    width: "250px",
+    height: "100%",
     background: "#fbf9f6",
     borderRadius: "28px",
     border: "1px solid #ece5db",
@@ -479,18 +549,20 @@ const styles = {
 
   main: {
     flex: 1,
+    height: "100%",
     minWidth: 0,
+    overflow: "hidden",
     display: "flex",
     flexDirection: "column",
-    gap: "20px",
+    gap: "14px",
   },
 
   topbar: {
     display: "flex",
     justifyContent: "space-between",
     alignItems: "center",
-    gap: "20px",
-    padding: "12px 8px",
+    gap: "14px",
+    padding: "4px 6px 8px",
   },
 
   search: {
@@ -545,9 +617,12 @@ const styles = {
 
   grid: {
     display: "grid",
-    gridTemplateColumns: "310px 420px 1fr",
-    gridTemplateRows: "345px 345px",
-    gap: "28px",
+    flex: 1,
+    minHeight: 0,
+    overflow: "hidden",
+    gridTemplateColumns: "370px 1fr 220px",
+    gridTemplateRows: "1fr 1fr",
+    gap: "14px",
     alignItems: "stretch",
   },
 
@@ -562,9 +637,10 @@ const styles = {
 
   commentsCard: {
     ...cardBase,
-    minWidth: "180px",
+    width: "220px",
+    minWidth: "220px",
+    maxWidth: "220px",
   },
-
   categoriesCard: {
     ...cardBase,
   },
@@ -606,7 +682,7 @@ const styles = {
     display: "flex",
     justifyContent: "space-between",
     alignItems: "center",
-    padding: "20px 22px",
+    padding: "14px 16px",
   },
 
   cardTitle: {
@@ -665,13 +741,15 @@ const styles = {
     justifyContent: "center",
     borderRadius: "50%",
     fontSize: "14px",
+    fontFamily: "'DM Sans', sans-serif",
+    outline: "none",
   },
 
   taskRow: {
     display: "flex",
     justifyContent: "space-between",
     alignItems: "center",
-    padding: "18px 22px",
+    padding: "12px 16px",
   },
 
   taskLeft: {
@@ -711,10 +789,10 @@ const styles = {
   },
 
   commentRow: {
-    padding: "18px 22px",
+    padding: "12px 16px",
     display: "flex",
     justifyContent: "space-between",
-    gap: "12px",
+    gap: "10px",
     alignItems: "flex-start",
   },
 
@@ -746,7 +824,7 @@ const styles = {
   },
 
   categoryRow: {
-    padding: "18px 22px",
+    padding: "12px 16px",
     display: "flex",
     justifyContent: "space-between",
     alignItems: "center",
@@ -793,13 +871,12 @@ const styles = {
     fontWeight: 700,
     color: "#2a241d",
   },
-
   trackRow: {
-    padding: "18px 18px",
+    padding: "12px 14px",
     display: "flex",
     justifyContent: "space-between",
     alignItems: "center",
-    minHeight: "56px",
+    minHeight: "48px",
   },
 
   trackLeft: {
