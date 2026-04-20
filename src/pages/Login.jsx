@@ -10,14 +10,41 @@ export default function Login() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [message, setMessage] = useState(null);
   const handleLogin = async () => {
-    const res = await fetch("http://localhost:3000/login", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, password }),
-    });
-    const data = await res.json();
-    localStorage.setItem("token", data.token);
-    console.log("Logged in");
+    try {
+      const res = await fetch("http://localhost:3000/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        setMessage({
+          text: data.message || "Login failed.",
+          type: "error",
+        });
+        return;
+      }
+
+      localStorage.setItem("token", data.token);
+
+      setMessage({
+        text: "Login successful!",
+        type: "success",
+      });
+
+      console.log("Logged in", data);
+
+      // temporary redirect
+      window.location.href = "/dashboard";
+    } catch (err) {
+      console.error("Login error:", err);
+      setMessage({
+        text: "Cannot connect to server.",
+        type: "error",
+      });
+    }
   };
 
   const handleRegister = async () => {
