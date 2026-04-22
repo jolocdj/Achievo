@@ -1,20 +1,50 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 export default function Dashboard() {
-  const [tasks, setTasks] = useState([
-    { id: 1, title: "Finish monthly reporting", due: "Today", done: true },
-    { id: 2, title: "Contract signing", due: "Today", done: false },
-    { id: 3, title: "Market overview keynote", due: "Tomorrow", done: false },
-    { id: 4, title: "Project research", due: "Tomorrow", done: false },
-    { id: 5, title: "Prepare invoices", due: "This week", done: false },
-  ]);
+  const [tasks, setTasks] = useState([]);
 
-  const toggleTask = (id) => {
-    setTasks((prev) =>
-      prev.map((task) =>
-        task.id === id ? { ...task, done: !task.done } : task,
-      ),
-    );
+  const fetchTasks = async () => {
+    try {
+      const token = localStorage.getItem("token");
+
+      const res = await fetch("http://localhost:3000/tasks", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      const data = await res.json();
+      setTasks(Array.isArray(data) ? data : []);
+    } catch (err) {
+      console.error("Error fetching tasks:", err);
+      setTasks([]);
+    }
+  };
+
+  useEffect(() => {
+    fetchTasks();
+  }, []);
+
+  const toggleTask = async (task) => {
+    try {
+      const token = localStorage.getItem("token");
+
+      await fetch(`http://localhost:3000/tasks/${task.id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          title: task.title,
+          completed: !task.completed,
+        }),
+      });
+
+      fetchTasks(); // refresh
+    } catch (err) {
+      console.error("Toggle error:", err);
+    }
   };
   const [currentDate, setCurrentDate] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState(new Date());
@@ -94,31 +124,9 @@ export default function Dashboard() {
       new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 1),
     );
   };
-  const categories = [
-    { name: "Work", people: ["A", "B"] },
-    { name: "Family", people: ["A", "B", "C"] },
-    { name: "Freelance work 01", people: ["A", "B"] },
-    { name: "Conference planning", people: ["A"] },
-  ];
-
-  const tracking = [
-    { title: "Create wireframe", time: "1h 25m 30s", active: true },
-    { title: "Slack logo design", time: "30m 18s", active: false },
-    { title: "Dashboard design", time: "1h 48m 22s", active: false },
-    { title: "Create wireframe", time: "17m 1s", active: false },
-    { title: "Mood tracker", time: "15h 5m 58s", active: false },
-  ];
-
-  const comments = [
-    {
-      title: "Market research",
-      text: "Find my keynote attached...",
-    },
-    {
-      title: "Market research",
-      text: "I've added the data. Let's check it out toge...",
-    },
-  ];
+  const categories = [];
+  const tracking = [];
+  const comments = [];
 
   return (
     <div style={styles.page}>
@@ -259,53 +267,63 @@ export default function Dashboard() {
 
           <section style={styles.tasksCard}>
             <div style={styles.cardHeader}>
-              <h3 style={styles.cardTitle}>My tasks (05)</h3>
+              <h3 style={styles.cardTitle}>My tasks ({tasks.length})</h3>{" "}
               <div style={styles.dots}>⋮</div>
             </div>
 
             <div>
-              {tasks.map((task, index) => (
-                <div
-                  key={task.id}
-                  style={{
-                    ...styles.taskRow,
-                    borderBottom:
-                      index !== tasks.length - 1 ? "1px solid #e7e1d7" : "none",
-                  }}
-                >
-                  <div style={styles.taskLeft}>
-                    <button
-                      onClick={() => toggleTask(task.id)}
-                      style={{
-                        ...styles.checkCircle,
-                        background: task.done ? "#f2d541" : "transparent",
-                        borderColor: "#555",
-                      }}
-                    >
-                      {task.done ? "✓" : ""}
-                    </button>
+              {tasks.length === 0 ? (
+                <div style={styles.emptyState}>No tasks yet.</div>
+              ) : (
+                tasks.map((task, index) => (
+                  <div
+                    key={task.id}
+                    style={{
+                      ...styles.taskRow,
+                      borderBottom:
+                        index !== tasks.length - 1
+                          ? "1px solid #e7e1d7"
+                          : "none",
+                    }}
+                  >
+                    <div style={styles.taskLeft}>
+                      <button
+                        onClick={() => toggleTask(task)}
+                        style={{
+                          ...styles.checkCircle,
+                          background: task.completed
+                            ? "#f2d541"
+                            : "transparent",
+                          borderColor: "#555",
+                        }}
+                      >
+                        {task.completed ? "✓" : ""}
+                      </button>
+
+                      <span
+                        style={{
+                          ...styles.taskTitle,
+                          textDecoration: task.completed
+                            ? "line-through"
+                            : "none",
+                          color: task.completed ? "#8f877b" : "#2f2b25",
+                        }}
+                      >
+                        {task.title}
+                      </span>
+                    </div>
 
                     <span
                       style={{
-                        ...styles.taskTitle,
-                        textDecoration: task.done ? "line-through" : "none",
-                        color: task.done ? "#8f877b" : "#2f2b25",
+                        ...styles.taskDue,
+                        color: "#49423b",
                       }}
                     >
-                      {task.title}
+                      {task.due}
                     </span>
                   </div>
-
-                  <span
-                    style={{
-                      ...styles.taskDue,
-                      color: task.due === "Today" ? "#d7a53b" : "#49423b",
-                    }}
-                  >
-                    {task.due}
-                  </span>
-                </div>
-              ))}
+                ))
+              )}
             </div>
           </section>
 
@@ -743,6 +761,12 @@ const styles = {
     fontSize: "14px",
     fontFamily: "'DM Sans', sans-serif",
     outline: "none",
+  },
+
+  emptyState: {
+    padding: "20px 16px",
+    fontSize: "14px",
+    color: "#7a7268",
   },
 
   taskRow: {
