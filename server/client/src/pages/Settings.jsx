@@ -1,6 +1,8 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 
 export default function Settings({ onClose }) {
+  const navigate = useNavigate();
   return (
     <div
       className="fixed inset-0 z-[999] flex items-center justify-center bg-[rgba(0,0,0,0.28)]"
@@ -26,7 +28,7 @@ export default function Settings({ onClose }) {
             <button
               onClick={() => {
                 onClose();
-                window.location.href = "/profile?section=email";
+                navigate("/profile?section=email");
               }}
               className="w-full rounded-full border border-[#2f281e] bg-white px-[16px] py-[10px] text-[13px] font-bold"
             >
@@ -36,7 +38,7 @@ export default function Settings({ onClose }) {
             <button
               onClick={() => {
                 onClose();
-                window.location.href = "/profile?section=password";
+                navigate("/profile?section=password");
               }}
               className="w-full rounded-full border border-[#2f281e] bg-white px-[16px] py-[10px] text-[13px] font-bold"
             >
