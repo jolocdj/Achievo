@@ -50,14 +50,11 @@ export default function Dashboard() {
     try {
       const token = localStorage.getItem("token");
 
-      const res = await fetch(
-        "Sa frontend code mo, hanapin lahat ng:/profile",
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+      const res = await fetch("https://achievo-59su.onrender.com/profile", {
+        headers: {
+          Authorization: `Bearer ${token}`,
         },
-      );
+      });
 
       if (!res.ok) return;
 
