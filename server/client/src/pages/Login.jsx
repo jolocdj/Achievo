@@ -59,7 +59,7 @@ export default function Login() {
       return;
     }
     try {
-      const res = await fetch("http://localhost:3000/login", {
+      const res = await fetch("https://achievo-59su.onrender.com/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
@@ -144,7 +144,7 @@ export default function Login() {
       setMessage({ text: "Passwords do not match.", type: "error" });
       return;
     }
-    const res = await fetch("http://localhost:3000/register", {
+    const res = await fetch("https://achievo-59su.onrender.com/register", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ name, birthdate, email, password }),

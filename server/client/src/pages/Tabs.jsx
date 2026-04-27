@@ -15,7 +15,7 @@ export default function Tabs({
         const token = localStorage.getItem("token");
 
         const res = await fetch(
-          "http://localhost:3000/notifications/unread-count",
+          "https://achievo-59su.onrender.com/notifications/unread-count",
           {
             headers: { Authorization: `Bearer ${token}` },
           },
@@ -124,7 +124,7 @@ export default function Tabs({
                     const token = localStorage.getItem("token");
 
                     await fetch(
-                      "http://localhost:3000/notifications/mark-read",
+                      "https://achievo-59su.onrender.com/notifications/mark-read",
                       {
                         method: "PUT",
                         headers: {

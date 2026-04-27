@@ -48,7 +48,7 @@ export default function Profile() {
         const token = localStorage.getItem("token");
         console.log("TOKEN:", token);
 
-        const res = await fetch("http://localhost:3000/profile", {
+        const res = await fetch("https://achievo-59su.onrender.com/profile", {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -69,7 +69,9 @@ export default function Profile() {
         setPassword(data.password || "********");
 
         if (data.profile_image) {
-          setProfileImage(`http://localhost:3000${data.profile_image}`);
+          setProfileImage(
+            `https://achievo-59su.onrender.com${data.profile_image}`,
+          );
         }
       } catch (err) {
         console.error("Fetch profile error:", err);
@@ -94,20 +96,23 @@ export default function Profile() {
     try {
       const token = localStorage.getItem("token");
 
-      const res = await fetch("http://localhost:3000/profile/photo", {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${token}`,
+      const res = await fetch(
+        "https://achievo-59su.onrender.com/profile/photo",
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          body: formData,
         },
-        body: formData,
-      });
+      );
 
       const data = await res.json();
       if (!res.ok) {
         throw new Error(data.message || "Upload failed");
       }
 
-      setProfileImage(`http://localhost:3000${data.profile_image}`);
+      setProfileImage(`https://achievo-59su.onrender.com${data.profile_image}`);
     } catch (err) {
       console.error("Upload error:", err);
     }
@@ -131,16 +136,19 @@ export default function Profile() {
     try {
       const token = localStorage.getItem("token");
 
-      const res = await fetch("http://localhost:3000/profile/name", {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
+      const res = await fetch(
+        "https://achievo-59su.onrender.com/profile/name",
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            name: newName.trim(),
+          }),
         },
-        body: JSON.stringify({
-          name: newName.trim(),
-        }),
-      });
+      );
 
       if (!res.ok) {
         const text = await res.text();
@@ -172,16 +180,19 @@ export default function Profile() {
     try {
       const token = localStorage.getItem("token");
 
-      const res = await fetch("http://localhost:3000/profile/birthday", {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
+      const res = await fetch(
+        "https://achievo-59su.onrender.com/profile/birthday",
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            birthdate: newBirthdate,
+          }),
         },
-        body: JSON.stringify({
-          birthdate: newBirthdate,
-        }),
-      });
+      );
 
       if (!res.ok) {
         const text = await res.text();
@@ -220,17 +231,20 @@ export default function Profile() {
     try {
       const token = localStorage.getItem("token");
 
-      const res = await fetch("http://localhost:3000/profile/email", {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
+      const res = await fetch(
+        "https://achievo-59su.onrender.com/profile/email",
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            email: newEmail.trim(),
+            password: emailPassword,
+          }),
         },
-        body: JSON.stringify({
-          email: newEmail.trim(),
-          password: emailPassword,
-        }),
-      });
+      );
 
       const data = await res.json();
 
@@ -278,17 +292,20 @@ export default function Profile() {
     try {
       const token = localStorage.getItem("token");
 
-      const res = await fetch("http://localhost:3000/profile/password", {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
+      const res = await fetch(
+        "https://achievo-59su.onrender.com/profile/password",
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            currentPassword,
+            newPassword,
+          }),
         },
-        body: JSON.stringify({
-          currentPassword,
-          newPassword,
-        }),
-      });
+      );
 
       const data = await res.json();
 

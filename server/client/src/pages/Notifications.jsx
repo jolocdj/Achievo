@@ -17,10 +17,10 @@ export default function Notifications() {
         const token = localStorage.getItem("token");
 
         const [notificationsRes, profileRes] = await Promise.all([
-          fetch("http://localhost:3000/notifications", {
+          fetch("https://achievo-59su.onrender.com/notifications", {
             headers: { Authorization: `Bearer ${token}` },
           }),
-          fetch("http://localhost:3000/profile", {
+          fetch("https://achievo-59su.onrender.com/profile", {
             headers: { Authorization: `Bearer ${token}` },
           }),
         ]);
@@ -65,7 +65,7 @@ export default function Notifications() {
       priority: task.priority || "No priority",
       assignee: profile?.name || "Me",
       avatar: profile?.profile_image
-        ? `http://localhost:3000${profile.profile_image}`
+        ? `https://achievo-59su.onrender.com${profile.profile_image}`
         : "/default-profile.png",
       raw: task,
     }));
@@ -83,7 +83,7 @@ export default function Notifications() {
         const token = localStorage.getItem("token");
 
         const res = await fetch(
-          `http://localhost:3000/tasks/${currentNotification.raw.id}/attachments`,
+          `https://achievo-59su.onrender.com/tasks/${currentNotification.raw.id}/attachments`,
           {
             headers: { Authorization: `Bearer ${token}` },
           },
@@ -111,7 +111,7 @@ export default function Notifications() {
         const token = localStorage.getItem("token");
 
         const res = await fetch(
-          `http://localhost:3000/tasks/${currentNotification.raw.id}/links`,
+          `https://achievo-59su.onrender.com/tasks/${currentNotification.raw.id}/links`,
           {
             headers: { Authorization: `Bearer ${token}` },
           },
@@ -161,7 +161,7 @@ export default function Notifications() {
       const token = localStorage.getItem("token");
 
       const res = await fetch(
-        `http://localhost:3000/tasks/${currentNotification.raw.id}/links`,
+        `https://achievo-59su.onrender.com/tasks/${currentNotification.raw.id}/links`,
         {
           method: "POST",
           headers: {
@@ -192,7 +192,7 @@ export default function Notifications() {
       const token = localStorage.getItem("token");
 
       const res = await fetch(
-        `http://localhost:3000/tasks/${currentNotification.raw.id}/links/${linkToDelete.id}`,
+        `https://achievo-59su.onrender.com/tasks/${currentNotification.raw.id}/links/${linkToDelete.id}`,
         {
           method: "DELETE",
           headers: {
@@ -429,7 +429,7 @@ export default function Notifications() {
                   attachments.map((file) => (
                     <a
                       key={file.id}
-                      href={`http://localhost:3000${file.file_path}`}
+                      href={`https://achievo-59su.onrender.com${file.file_path}`}
                       target="_blank"
                       rel="noreferrer"
                       className="max-w-[520px] truncate text-[#2f2b25] underline"

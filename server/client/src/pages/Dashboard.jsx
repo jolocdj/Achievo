@@ -17,7 +17,7 @@ export default function Dashboard() {
     try {
       const token = localStorage.getItem("token");
 
-      const res = await fetch("http://localhost:3000/tasks", {
+      const res = await fetch("https://achievo-59su.onrender.com/tasks", {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -50,18 +50,23 @@ export default function Dashboard() {
     try {
       const token = localStorage.getItem("token");
 
-      const res = await fetch("http://localhost:3000/profile", {
-        headers: {
-          Authorization: `Bearer ${token}`,
+      const res = await fetch(
+        "Sa frontend code mo, hanapin lahat ng:/profile",
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         },
-      });
+      );
 
       if (!res.ok) return;
 
       const data = await res.json();
       setProfileName(data.name || data.username || "User");
       if (data.profile_image) {
-        setProfileImage(`http://localhost:3000${data.profile_image}`);
+        setProfileImage(
+          `https://achievo-59su.onrender.com${data.profile_image}`,
+        );
       } else {
         setProfileImage("/default-profile.png");
       }
@@ -87,7 +92,7 @@ export default function Dashboard() {
       const token = localStorage.getItem("token");
 
       const res = await fetch(
-        `http://localhost:3000/tasks/${selectedTask.id}`,
+        `https://achievo-59su.onrender.com/tasks/${selectedTask.id}`,
         {
           method: "DELETE",
           headers: {
@@ -142,7 +147,7 @@ export default function Dashboard() {
     try {
       const token = localStorage.getItem("token");
 
-      await fetch(`http://localhost:3000/tasks/${task.id}`, {
+      await fetch(`https://achievo-59su.onrender.com/tasks/${task.id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -324,7 +329,7 @@ export default function Dashboard() {
       const token = localStorage.getItem("token");
 
       const res = await fetch(
-        `http://localhost:3000/reminders/${selectedReminder.id}`,
+        `https://achievo-59su.onrender.com/reminders/${selectedReminder.id}`,
         {
           method: "DELETE",
           headers: {
@@ -412,7 +417,7 @@ export default function Dashboard() {
     try {
       const token = localStorage.getItem("token");
 
-      const res = await fetch("http://localhost:3000/trackers", {
+      const res = await fetch("https://achievo-59su.onrender.com/trackers", {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -456,7 +461,7 @@ export default function Dashboard() {
 
           const token = localStorage.getItem("token");
 
-          fetch(`http://localhost:3000/trackers/${item.id}`, {
+          fetch(`https://achievo-59su.onrender.com/trackers/${item.id}`, {
             method: "PUT",
             headers: {
               "Content-Type": "application/json",
@@ -590,7 +595,7 @@ export default function Dashboard() {
     try {
       const token = localStorage.getItem("token");
 
-      const res = await fetch("http://localhost:3000/trackers", {
+      const res = await fetch("https://achievo-59su.onrender.com/trackers", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -624,12 +629,15 @@ export default function Dashboard() {
     try {
       const token = localStorage.getItem("token");
 
-      await fetch(`http://localhost:3000/trackers/${selectedTracker.id}`, {
-        method: "DELETE",
-        headers: {
-          Authorization: `Bearer ${token}`,
+      await fetch(
+        `https://achievo-59su.onrender.com/trackers/${selectedTracker.id}`,
+        {
+          method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         },
-      });
+      );
 
       setTracking((prev) =>
         prev.filter((item) => item.id !== selectedTracker.id),
@@ -647,18 +655,21 @@ export default function Dashboard() {
     try {
       const token = localStorage.getItem("token");
 
-      await fetch(`http://localhost:3000/trackers/${selectedTracker.id}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
+      await fetch(
+        `https://achievo-59su.onrender.com/trackers/${selectedTracker.id}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            title: trackerDetailTitle.trim(),
+            remaining_seconds: 0,
+            done: true,
+          }),
         },
-        body: JSON.stringify({
-          title: trackerDetailTitle.trim(),
-          remaining_seconds: 0,
-          done: true,
-        }),
-      });
+      );
 
       setTracking((prev) =>
         prev.map((item) =>
@@ -702,18 +713,21 @@ export default function Dashboard() {
     try {
       const token = localStorage.getItem("token");
 
-      await fetch(`http://localhost:3000/trackers/${selectedTracker.id}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
+      await fetch(
+        `https://achievo-59su.onrender.com/trackers/${selectedTracker.id}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            title: trackerDetailTitle.trim(),
+            remaining_seconds: trackerDetailRemainingSeconds,
+            done: trackerDetailDone,
+          }),
         },
-        body: JSON.stringify({
-          title: trackerDetailTitle.trim(),
-          remaining_seconds: trackerDetailRemainingSeconds,
-          done: trackerDetailDone,
-        }),
-      });
+      );
 
       setTracking((prev) =>
         prev.map((item) =>
@@ -794,7 +808,7 @@ export default function Dashboard() {
         const exists = categories.some((item) => item.name === category.name);
         if (exists) continue;
 
-        await fetch("http://localhost:3000/categories", {
+        await fetch("https://achievo-59su.onrender.com/categories", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -815,7 +829,7 @@ export default function Dashboard() {
         if (stillSelected) continue;
 
         const res = await fetch(
-          `http://localhost:3000/categories/${category.id}`,
+          `https://achievo-59su.onrender.com/categories/${category.id}`,
           {
             method: "DELETE",
             headers: {
@@ -844,7 +858,7 @@ export default function Dashboard() {
     try {
       const token = localStorage.getItem("token");
 
-      const res = await fetch("http://localhost:3000/categories", {
+      const res = await fetch("https://achievo-59su.onrender.com/categories", {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -862,7 +876,7 @@ export default function Dashboard() {
     try {
       const token = localStorage.getItem("token");
 
-      const res = await fetch("http://localhost:3000/reminders", {
+      const res = await fetch("https://achievo-59su.onrender.com/reminders", {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -935,7 +949,7 @@ export default function Dashboard() {
     try {
       const token = localStorage.getItem("token");
 
-      const res = await fetch("http://localhost:3000/reminders", {
+      const res = await fetch("https://achievo-59su.onrender.com/reminders", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -998,7 +1012,7 @@ export default function Dashboard() {
       const deadline = `${reminderDetailDate}T${reminderDetailTime}`;
 
       const res = await fetch(
-        `http://localhost:3000/reminders/${selectedReminder.id}`,
+        `https://achievo-59su.onrender.com/reminders/${selectedReminder.id}`,
         {
           method: "PUT",
           headers: {
@@ -2533,8 +2547,8 @@ export default function Dashboard() {
 
                         const res = await fetch(
                           isEditingTask
-                            ? `http://localhost:3000/tasks/${selectedTask.id}`
-                            : "http://localhost:3000/tasks",
+                            ? `https://achievo-59su.onrender.com/tasks/${selectedTask.id}`
+                            : "https://achievo-59su.onrender.com/tasks",
                           {
                             method: isEditingTask ? "PUT" : "POST",
                             headers: {

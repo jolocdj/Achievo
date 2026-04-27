@@ -13,7 +13,7 @@ export default function TasksView({ tasks = [], toggleTask }) {
       try {
         const token = localStorage.getItem("token");
 
-        const res = await fetch("http://localhost:3000/profile", {
+        const res = await fetch("https://achievo-59su.onrender.com/profile", {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -22,7 +22,9 @@ export default function TasksView({ tasks = [], toggleTask }) {
         const data = await res.json();
 
         if (data.profile_image) {
-          setProfileImage(`http://localhost:3000${data.profile_image}`);
+          setProfileImage(
+            `https://achievo-59su.onrender.com${data.profile_image}`,
+          );
         } else {
           setProfileImage("/default-profile.png");
         }
@@ -39,14 +41,14 @@ export default function TasksView({ tasks = [], toggleTask }) {
     const token = localStorage.getItem("token");
 
     const commentsRes = await fetch(
-      `http://localhost:3000/tasks/${taskId}/comments`,
+      `https://achievo-59su.onrender.com/tasks/${taskId}/comments`,
       {
         headers: { Authorization: `Bearer ${token}` },
       },
     );
 
     const attachmentsRes = await fetch(
-      `http://localhost:3000/tasks/${taskId}/attachments`,
+      `https://achievo-59su.onrender.com/tasks/${taskId}/attachments`,
       {
         headers: { Authorization: `Bearer ${token}` },
       },
@@ -67,7 +69,7 @@ export default function TasksView({ tasks = [], toggleTask }) {
     const token = localStorage.getItem("token");
 
     await fetch(
-      `http://localhost:3000/tasks/${selectedTask.id}/comments/${commentId}`,
+      `https://achievo-59su.onrender.com/tasks/${selectedTask.id}/comments/${commentId}`,
       {
         method: "DELETE",
         headers: {
@@ -83,14 +85,17 @@ export default function TasksView({ tasks = [], toggleTask }) {
 
     const token = localStorage.getItem("token");
 
-    await fetch(`http://localhost:3000/tasks/${selectedTask.id}/comments`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
+    await fetch(
+      `https://achievo-59su.onrender.com/tasks/${selectedTask.id}/comments`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ comment: commentText }),
       },
-      body: JSON.stringify({ comment: commentText }),
-    });
+    );
 
     setCommentText("");
     await fetchTaskDetails(selectedTask.id);
@@ -101,7 +106,7 @@ export default function TasksView({ tasks = [], toggleTask }) {
     const token = localStorage.getItem("token");
 
     await fetch(
-      `http://localhost:3000/tasks/${selectedTask.id}/attachments/${attachmentId}`,
+      `https://achievo-59su.onrender.com/tasks/${selectedTask.id}/attachments/${attachmentId}`,
       {
         method: "DELETE",
         headers: {
@@ -120,13 +125,16 @@ export default function TasksView({ tasks = [], toggleTask }) {
     const formData = new FormData();
     formData.append("file", file);
 
-    await fetch(`http://localhost:3000/tasks/${selectedTask.id}/attachments`, {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${token}`,
+    await fetch(
+      `https://achievo-59su.onrender.com/tasks/${selectedTask.id}/attachments`,
+      {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        body: formData,
       },
-      body: formData,
-    });
+    );
 
     await fetchTaskDetails(selectedTask.id);
   };
@@ -570,7 +578,7 @@ export default function TasksView({ tasks = [], toggleTask }) {
                           className="mb-[8px] flex items-center justify-between gap-[12px]"
                         >
                           <a
-                            href={`http://localhost:3000${file.file_path}`}
+                            href={`https://achievo-59su.onrender.com${file.file_path}`}
                             target="_blank"
                             rel="noreferrer"
                             className="min-w-0 truncate text-[#2f2b25] underline"
