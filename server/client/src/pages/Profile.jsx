@@ -70,7 +70,7 @@ export default function Profile() {
 
         if (data.profile_image) {
           setProfileImage(
-            `https://achievo-59su.onrender.com${data.profile_image}`,
+            `https://achievo-59su.onrender.com/default-profile.png`,
           );
         }
       } catch (err) {
@@ -112,7 +112,7 @@ export default function Profile() {
         throw new Error(data.message || "Upload failed");
       }
 
-      setProfileImage(`https://achievo-59su.onrender.com${data.profile_image}`);
+      setProfileImage(`https://achievo-59su.onrender.com/default-profile.png`);
     } catch (err) {
       console.error("Upload error:", err);
     }

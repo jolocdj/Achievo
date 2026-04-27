@@ -548,8 +548,8 @@ app.post("/register", async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     await pool.query(
-      "INSERT INTO users (name, birthdate, email, password) VALUES ($1, $2, $3, $4)",
-      [name, birthdate, email, hashedPassword],
+      "INSERT INTO users (name, birthdate, email, password, profile_image) VALUES ($1, $2, $3, $4, $5)",
+      [name, birthdate, email, hashedPassword, "/default-profile.png"],
     );
 
     res.status(201).json({ message: "User registered" });
