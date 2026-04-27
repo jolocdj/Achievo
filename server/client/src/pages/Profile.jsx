@@ -651,6 +651,7 @@ export default function Profile() {
         }}
         onOpenSettings={() => setShowSettingsModal(true)}
         onOpenLogout={() => setShowLogoutModal(true)}
+        userName={name}
       />
 
       <main className="flex-1 h-full flex flex-col gap-[14px] overflow-hidden min-w-0">
