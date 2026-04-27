@@ -1047,15 +1047,14 @@ function authMiddleware(req, res, next) {
   }
 }
 
-app.get("/", (req, res) => {
-  res.send("Server is running");
-});
+const distPath = path.resolve(__dirname, "client", "dist");
 
-app.use(express.static(path.join(__dirname, "client/dist")));
+app.use(express.static(distPath));
 
 app.use((req, res) => {
-  res.sendFile(path.join(__dirname, "client/dist/index.html"));
+  res.sendFile(path.join(distPath, "index.html"));
 });
+
 app.listen(3000, () => {
   console.log("Server running on port 3000");
 });
