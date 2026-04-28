@@ -13,21 +13,22 @@ export default function TasksView({ tasks = [], toggleTask }) {
       try {
         const token = localStorage.getItem("token");
 
-        const res = await fetch("https://achievo-59su.onrender.com/profile", {
-          headers: {
-            Authorization: `Bearer ${token}`,
+        const res = await fetch(
+          "https://achievo-59su.onrender.com/api/profile",
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
           },
-        });
+        );
 
         const data = await res.json();
 
-        if (data.profile_image) {
-          setProfileImage(
-            `https://achievo-59su.onrender.com${data.profile_image}`,
-          );
-        } else {
-          setProfileImage("/default-profile.png");
-        }
+        setProfileImage(
+          data.profile_image && data.profile_image !== "/default-profile.png"
+            ? `https://achievo-59su.onrender.com${data.profile_image}`
+            : "/default-profile.png",
+        );
       } catch (err) {
         console.error("Profile fetch error:", err);
         setProfileImage("/default-profile.png");
