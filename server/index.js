@@ -260,8 +260,7 @@ app.get("/notifications", authMiddleware, async (req, res) => {
         AND tasks.notification_time IS NOT NULL
      AND (
   tasks.notification_date::date + tasks.notification_time::time
-) <= LOCALTIMESTAMP
-      ORDER BY tasks.notification_date DESC, tasks.notification_time DESC
+) <= (NOW() AT TIME ZONE 'Asia/Manila')      ORDER BY tasks.notification_date DESC, tasks.notification_time DESC
       `,
       [req.user.userId],
     );
@@ -289,8 +288,7 @@ app.get("/notifications/unread-count", authMiddleware, async (req, res) => {
         AND notification_time IS NOT NULL
         AND (
           notification_date::date + notification_time::time
-        ) <= LOCALTIMESTAMP
-      `,
+) <= (NOW() AT TIME ZONE 'Asia/Manila')      `,
       [req.user.userId],
     );
 
@@ -312,8 +310,7 @@ app.put("/notifications/mark-read", authMiddleware, async (req, res) => {
         AND notification_time IS NOT NULL
         AND (
           notification_date::date + notification_time::time
-        ) <= LOCALTIMESTAMP
-      `,
+) <= (NOW() AT TIME ZONE 'Asia/Manila')      `,
       [req.user.userId],
     );
 

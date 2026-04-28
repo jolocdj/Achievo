@@ -71,13 +71,11 @@ export default function Profile() {
         setBirthdate(data.birthdate ? data.birthdate.split("T")[0] : "");
         setPassword(data.password || "********");
 
-        if (data.profile_image) {
-          setProfileImage(
-            data.profile_image
-              ? `https://achievo-59su.onrender.com${data.profile_image}`
-              : "/default-profile.png",
-          );
-        }
+        setProfileImage(
+          data.profile_image && data.profile_image !== "/default-profile.png"
+            ? `https://achievo-59su.onrender.com${data.profile_image}`
+            : "/default-profile.png",
+        );
       } catch (err) {
         console.error("Fetch profile error:", err);
       }

@@ -20,7 +20,7 @@ export default function Notifications() {
           fetch("https://achievo-59su.onrender.com/notifications", {
             headers: { Authorization: `Bearer ${token}` },
           }),
-          fetch("https://achievo-59su.onrender.com/profile", {
+          fetch("https://achievo-59su.onrender.com/api/profile", {
             headers: { Authorization: `Bearer ${token}` },
           }),
         ]);
