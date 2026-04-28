@@ -50,7 +50,7 @@ export default function Dashboard() {
     try {
       const token = localStorage.getItem("token");
 
-      const res = await fetch("https://achievo-59su.onrender.com/profile", {
+      const res = await fetch("https://achievo-59su.onrender.com/api/profile", {
         headers: {
           Authorization: `Bearer ${token}`,
         },

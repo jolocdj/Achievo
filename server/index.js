@@ -789,7 +789,7 @@ app.delete("/categories/:id", authMiddleware, async (req, res) => {
   }
 });
 
-app.get("/profile", authMiddleware, async (req, res) => {
+app.get("/api/profile", authMiddleware, async (req, res) => {
   try {
     const result = await pool.query(
       "SELECT id, name, email, birthdate::text AS birthdate, password, profile_image FROM users WHERE id = $1",

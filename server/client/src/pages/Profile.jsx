@@ -48,11 +48,14 @@ export default function Profile() {
         const token = localStorage.getItem("token");
         console.log("TOKEN:", token);
 
-        const res = await fetch("https://achievo-59su.onrender.com/profile", {
-          headers: {
-            Authorization: `Bearer ${token}`,
+        const res = await fetch(
+          "https://achievo-59su.onrender.com/api/profile",
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
           },
-        });
+        );
 
         if (!res.ok) {
           const text = await res.text();
