@@ -60,13 +60,11 @@ export default function Dashboard() {
 
       const data = await res.json();
       setProfileName(data.name || data.username || "User");
-      if (data.profile_image) {
-        setProfileImage(
-          `https://achievo-59su.onrender.com${data.profile_image}`,
-        );
-      } else {
-        setProfileImage("/default-profile.png");
-      }
+      setProfileImage(
+        data.profile_image && data.profile_image !== "/default-profile.png"
+          ? `https://achievo-59su.onrender.com${data.profile_image}`
+          : "/default-profile.png",
+      );
     } catch (err) {
       console.error("Fetch profile error:", err);
       setProfileImage("/default-profile.png");
@@ -80,7 +78,7 @@ export default function Dashboard() {
     fetchCategories();
     fetchTrackers();
     fetchProfile();
-  }, []);
+  }, [activeTab]);
 
   const handleDeleteTask = async () => {
     if (!selectedTask) return;
