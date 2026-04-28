@@ -561,7 +561,10 @@ app.post("/register", async (req, res) => {
 app.get("/reminders", authMiddleware, async (req, res) => {
   try {
     const result = await pool.query(
-      "SELECT * FROM reminders WHERE user_id = $1 ORDER BY id DESC",
+      `SELECT id, title, deadline::text AS deadline, description, accomplished, user_id
+ FROM reminders
+ WHERE user_id = $1
+ ORDER BY id DESC`,
       [req.user.userId],
     );
 
@@ -577,7 +580,9 @@ app.post("/reminders", authMiddleware, async (req, res) => {
     const { title, deadline, description } = req.body;
 
     const result = await pool.query(
-      "INSERT INTO reminders (title, deadline, description, accomplished, user_id) VALUES ($1, $2, $3, $4, $5) RETURNING *",
+      `INSERT INTO reminders (title, deadline, description, accomplished, user_id)
+ VALUES ($1, $2, $3, $4, $5)
+ RETURNING id, title, deadline::text AS deadline, description, accomplished, user_id`,
       [title, deadline || null, description || "", false, req.user.userId],
     );
 
@@ -594,7 +599,10 @@ app.put("/reminders/:id", authMiddleware, async (req, res) => {
     const { title, deadline, description, accomplished } = req.body;
 
     const result = await pool.query(
-      "UPDATE reminders SET title = $1, deadline = $2, description = $3, accomplished = $4 WHERE id = $5 AND user_id = $6 RETURNING *",
+      `UPDATE reminders
+ SET title = $1, deadline = $2, description = $3, accomplished = $4
+ WHERE id = $5 AND user_id = $6
+ RETURNING id, title, deadline::text AS deadline, description, accomplished, user_id`,
       [
         title,
         deadline || null,

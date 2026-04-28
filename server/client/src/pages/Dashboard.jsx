@@ -78,8 +78,7 @@ export default function Dashboard() {
     fetchCategories();
     fetchTrackers();
     fetchProfile();
-  }, [activeTab]);
-
+  }, []);
   const handleDeleteTask = async () => {
     if (!selectedTask) return;
 
@@ -174,6 +173,10 @@ export default function Dashboard() {
       location.state?.activeTab ||
       "dashboard",
   );
+
+  useEffect(() => {
+    fetchProfile();
+  }, [activeTab]);
 
   useEffect(() => {
     localStorage.setItem("activeTab", activeTab);
@@ -284,8 +287,9 @@ export default function Dashboard() {
   const handleOpenReminderDetails = (reminder) => {
     setSelectedReminder(reminder);
 
-    const deadlineDate = reminder.deadline ? new Date(reminder.deadline) : null;
-
+    const deadlineDate = reminder.deadline
+      ? new Date(reminder.deadline.replace(" ", "T"))
+      : null;
     setReminderDetailTitle(reminder.title || "");
     setReminderDetailDate(
       deadlineDate ? deadlineDate.toISOString().slice(0, 10) : "",
@@ -1445,16 +1449,15 @@ export default function Dashboard() {
                   ) : (
                     <div className="rounded-[10px] bg-[#F5F5FA] px-[14px] py-[10px] text-[14px] text-[#2d261d]">
                       {selectedReminder.deadline
-                        ? new Date(selectedReminder.deadline).toLocaleString(
-                            "en-US",
-                            {
-                              month: "short",
-                              day: "numeric",
-                              year: "numeric",
-                              hour: "numeric",
-                              minute: "2-digit",
-                            },
-                          )
+                        ? new Date(
+                            selectedReminder.deadline.replace(" ", "T"),
+                          ).toLocaleString("en-US", {
+                            month: "short",
+                            day: "numeric",
+                            year: "numeric",
+                            hour: "numeric",
+                            minute: "2-digit",
+                          })
                         : "No deadline"}
                     </div>
                   )}
@@ -2808,7 +2811,9 @@ export default function Dashboard() {
                           <div className="mb-[6px] text-[12px] font-medium text-[#b58b3c]">
                             {reminder.deadline
                               ? (() => {
-                                  const deadline = new Date(reminder.deadline);
+                                  const deadline = new Date(
+                                    reminder.deadline.replace(" ", "T"),
+                                  );
                                   const now = new Date();
                                   const isOverdue =
                                     deadline < now && !reminder.accomplished;
