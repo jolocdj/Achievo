@@ -66,7 +66,7 @@ export default function Notifications() {
       assignee: profile?.name || "Me",
       avatar: profile?.profile_image
         ? `https://achievo-59su.onrender.com${profile.profile_image}`
-        : "/default-profile.png",
+        : "https://achievo-59su.onrender.com/default-profile.png",
       raw: task,
     }));
   }, [notifications, profile]);

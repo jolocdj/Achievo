@@ -61,13 +61,15 @@ export default function Dashboard() {
       const data = await res.json();
       setProfileName(data.name || data.username || "User");
       setProfileImage(
-        data.profile_image && data.profile_image !== "/default-profile.png"
+        data.profile_image &&
+          data.profile_image !==
+            "https://achievo-59su.onrender.com/default-profile.png"
           ? `https://achievo-59su.onrender.com${data.profile_image}`
-          : "/default-profile.png",
+          : "https://achievo-59su.onrender.com/default-profile.png",
       );
     } catch (err) {
       console.error("Fetch profile error:", err);
-      setProfileImage("/default-profile.png");
+      setProfileImage("https://achievo-59su.onrender.com/default-profile.png");
     } finally {
       setProfileLoading(false);
     }

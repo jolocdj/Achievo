@@ -23,7 +23,9 @@ export default function Profile() {
   const [email, setEmail] = useState("");
   const [birthdate, setBirthdate] = useState("");
   const [password, setPassword] = useState("********");
-  const [profileImage, setProfileImage] = useState("/default-profile.png");
+  const [profileImage, setProfileImage] = useState(
+    "https://achievo-59su.onrender.com/default-profile.png",
+  );
   const [showSettingsModal, setShowSettingsModal] = useState(false);
   const [showLogoutModal, setShowLogoutModal] = useState(false);
   const [showChangeNameModal, setShowChangeNameModal] = useState(false);
@@ -72,9 +74,11 @@ export default function Profile() {
         setPassword(data.password || "********");
 
         setProfileImage(
-          data.profile_image && data.profile_image !== "/default-profile.png"
+          data.profile_image &&
+            data.profile_image !==
+              "https://achievo-59su.onrender.com/default-profile.png"
             ? `https://achievo-59su.onrender.com${data.profile_image}`
-            : "/default-profile.png",
+            : "https://achievo-59su.onrender.com/default-profile.png",
         );
       } catch (err) {
         console.error("Fetch profile error:", err);
