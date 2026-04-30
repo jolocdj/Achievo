@@ -1209,12 +1209,17 @@ export default function Dashboard() {
             >
               {profileLoading ? (
                 <div className="h-full w-full bg-[#F5F5FA]" />
-              ) : (
+              ) : profileImage ? (
                 <img
                   src={profileImage}
                   alt="profile"
+                  onError={() => setProfileImage("")}
                   className="h-full w-full object-cover"
                 />
+              ) : (
+                <div className="flex h-full w-full items-center justify-center bg-[#a8d6e6] text-[14px] font-bold text-[#1f1a14]">
+                  {profileName?.charAt(0)?.toUpperCase() || "U"}
+                </div>
               )}
             </button>
           </div>
