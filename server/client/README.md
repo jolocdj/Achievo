@@ -13,7 +13,7 @@ This project demonstrates fullstack development using modern technologies, inclu
 ## 🛠 Tech Stack
 
 ### Frontend
-- React (Vite)
+- React (Vite).
 - JavaScript
 - HTML & CSS
 - Tailwind CSS
